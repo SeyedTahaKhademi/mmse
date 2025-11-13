@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import DocumentTile from '@/components/DocumentTile';
@@ -9,7 +9,7 @@ import type { DocumentTileSize } from '@/data/documents';
 
 const filterTags = ['همه', 'موشکی', 'تحلیل', 'گزارش تصویری', 'همدلی'];
 
-export default function DocumentsExplorePage() {
+function DocumentsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   const [activeFilter, setActiveFilter] = useState('همه');
@@ -96,5 +96,13 @@ export default function DocumentsExplorePage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function DocumentsExplorePage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">بارگذاری...</div>}>
+      <DocumentsContent />
+    </Suspense>
   );
 }
