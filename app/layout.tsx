@@ -2,6 +2,7 @@
 
 import type { Metadata } from "next";
 import "./globals.css"; // فایل استایل Tailwind
+import { SettingsProvider } from "@/components/SettingsContext";
 
 export const metadata: Metadata = {
   title: "روایات | شهدای ۱۲ روزه",
@@ -28,7 +29,9 @@ export default function RootLayout({
       
       {/* 3. اضافه کردن کلاس font-vazir به body تا فونت پیش‌فرض باشد */}
       <body className="font-vazir"> 
-        {children}
+        <SettingsProvider>
+          {children}
+        </SettingsProvider>
       </body>
     </html>
   );

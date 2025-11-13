@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout';
-import { documentItems } from '@/data/documents';
+import data from '@/data/documents.json';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -8,7 +8,7 @@ interface DocumentDetailPageProps {
 }
 
 export default function DocumentDetailPage({ params }: DocumentDetailPageProps) {
-  const item = documentItems.find((doc) => doc.slug === params.slug);
+  const item = data.find((doc) => doc.slug === params.slug);
 
   if (!item) {
     notFound();

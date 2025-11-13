@@ -6,6 +6,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, User, Settings } from 'lucide-react';
+import { useI18n } from './i18n';
 
 const NavItem: React.FC<{
   href: string;
@@ -31,11 +32,12 @@ const NavItem: React.FC<{
 
 const BottomNavBar: React.FC = () => {
   const pathname = usePathname();
+  const t = useI18n();
 
   const items = [
-    { href: '/settings', icon: <Settings size={22} />, label: 'تنظیمات' },
-    { href: '/', icon: <Home size={24} />, label: 'خانه' },
-    { href: '/profile', icon: <User size={22} />, label: 'پروفایل' },
+    { href: '/settings', icon: <Settings size={22} />, label: t.settings },
+    { href: '/', icon: <Home size={24} />, label: t.home },
+    { href: '/profile', icon: <User size={22} />, label: t.profile },
   ];
 
   return (

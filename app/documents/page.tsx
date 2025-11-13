@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout';
 import DocumentTile from '@/components/DocumentTile';
-import { documentItems } from '@/data/documents';
+import data from '@/data/documents.json';
 
 const filterTags = ['همه', 'موشکی', 'تحلیل', 'گزارش تصویری', 'همدلی', 'صوتی'];
 
@@ -28,7 +28,7 @@ export default function DocumentsExplorePage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 auto-rows-[130px] sm:auto-rows-[150px] lg:auto-rows-[180px] gap-3">
-          {documentItems.map((item) => (
+          {data.map((item) => (
             <DocumentTile
               key={item.slug}
               title={item.title}

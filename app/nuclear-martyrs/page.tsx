@@ -1,44 +1,6 @@
 import Layout from '@/components/Layout';
 import StoryCard from '@/components/StoryCard';
-
-const martyrs = [
-  {
-    title: 'شهید طهرانی مقدم',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-  {
-    title: 'شهید علیمحمدی',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-  {
-    title: 'شهید شهریاری',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-  {
-    title: 'شهید احمدی روشن',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-  {
-    title: 'شهید دکتر فخری‌زاده',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-  {
-    title: 'شهید رضایی نژاد',
-    description: 'شهید',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=60',
-    tag: 'شهید',
-  },
-];
+import data from '@/data/nuclear_martyrs.json';
 
 export default function NuclearMartyrsPage() {
   return (
@@ -52,8 +14,16 @@ export default function NuclearMartyrsPage() {
         </header>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {martyrs.map((martyr) => (
-            <StoryCard key={martyr.title} {...martyr} variant="compact" />
+          {data.map((m) => (
+            <StoryCard
+              key={m.slug}
+              title={m.name}
+              description={m.shortDescription}
+              image={m.image}
+              tag={'شهید'}
+              href={`/nuclear-martyrs/${m.slug}`}
+              variant="compact"
+            />
           ))}
         </div>
       </div>
