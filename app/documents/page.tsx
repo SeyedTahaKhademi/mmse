@@ -28,16 +28,21 @@ export default function DocumentsExplorePage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 auto-rows-[130px] sm:auto-rows-[150px] lg:auto-rows-[180px] gap-3">
-          {data.map((item) => (
-            <DocumentTile
-              key={item.slug}
-              title={item.title}
-              category={item.category}
-              image={item.image}
-              size={item.size}
-              href={`/documents/${item.slug}`}
-            />
-          ))}
+          {data.map((item) => {
+            const size = (['normal','wide','tall','hero'] as const).includes(item.size as any)
+              ? (item.size as 'normal'|'wide'|'tall'|'hero')
+              : 'normal';
+            return (
+              <DocumentTile
+                key={item.slug}
+                title={item.title}
+                category={item.category}
+                image={item.image}
+                size={size}
+                href={`/documents/${item.slug}`}
+              />
+            );
+          })}
         </div>
       </div>
     </Layout>
