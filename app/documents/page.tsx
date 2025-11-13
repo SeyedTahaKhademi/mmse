@@ -1,25 +1,58 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import DocumentTile from '@/components/DocumentTile';
-import data from '@/data/documents.json';
+import documentData from '@/data/documents.json';
+import type { DocumentTileSize } from '@/data/documents';
 
-const filterTags = ['همه', 'موشکی', 'تحلیل', 'گزارش تصویری', 'همدلی', 'صوتی'];
+const filterTags = ['همه', 'موشکی', 'تحلیل', 'گزارش تصویری', 'همدلی'];
 
 export default function DocumentsExplorePage() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const [activeFilter, setActiveFilter] = useState('همه');
+
+  useEffect(() => {
+    if (categoryParam && filterTags.includes(categoryParam)) {
+      setActiveFilter(categoryParam);
+    }
+  }, [categoryParam]);
+
+  const filteredData = activeFilter === 'همه' 
+    ? documentData 
+    : documentData.filter(item => item.category === activeFilter);
+
   return (
     <Layout>
       <div className="space-y-8">
-        <header className="space-y-3 text-center">
-          <h1 className="text-3xl font-black text-gray-900">مستندات</h1>
-          <p className="text-sm text-gray-600">
-            چینش کاشی‌وار الهام گرفته از بخش Explore اینستاگرام؛ همه روایت‌ها در یک نگاه.
-          </p>
+        {/* Header */}
+        <header className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-black text-gray-900">مستندات و اسناد</h1>
+              <p className="mt-2 text-gray-600">
+                مجموعه‌ای جامع از مستندات، تصاویر و تحلیل‌های مرتبط با جنگ ۱۲ روزه
+              </p>
+            </div>
+            <div className="hidden md:block rounded-full border-2 border-rose-500 px-6 py-2">
+              <span className="text-sm font-semibold text-rose-600">مستندات</span>
+            </div>
+          </div>
         </header>
 
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        {/* Filter Tags */}
+        <div className="flex flex-wrap items-center gap-2">
           {filterTags.map((tag) => (
             <button
               key={tag}
-              className={`rounded-full border border-gray-200 px-4 py-1 text-sm font-semibold transition hover:border-gray-400 hover:text-gray-900 ${tag === 'همه' ? 'bg-gray-900 text-white border-gray-900' : 'text-gray-600'}`}
+              onClick={() => setActiveFilter(tag)}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+                tag === activeFilter
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
               type="button"
             >
               {tag}
@@ -27,20 +60,37 @@ export default function DocumentsExplorePage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 auto-rows-[130px] sm:auto-rows-[150px] lg:auto-rows-[180px] gap-3">
-          {data.map((item) => {
-            const size = (['normal','wide','tall','hero'] as const).includes(item.size as any)
-              ? (item.size as 'normal'|'wide'|'tall'|'hero')
+        {/* Masonry Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px] md:auto-rows-[240px]">
+          {filteredData.map((item, index) => {
+            const allowedSizes: DocumentTileSize[] = ['normal', 'wide', 'tall', 'hero'];
+            const size = item.size && allowedSizes.includes(item.size as DocumentTileSize)
+              ? (item.size as DocumentTileSize)
               : 'normal';
+            
+            // Create masonry effect with different sizes
+            let colSpan = 'col-span-1';
+            let rowSpan = 'row-span-1';
+            
+            if (size === 'hero') {
+              colSpan = 'md:col-span-2 lg:col-span-2';
+              rowSpan = 'md:row-span-2 lg:row-span-2';
+            } else if (size === 'wide') {
+              colSpan = 'md:col-span-2 lg:col-span-2';
+            } else if (size === 'tall') {
+              rowSpan = 'md:row-span-2 lg:row-span-2';
+            }
+            
             return (
-              <DocumentTile
-                key={item.slug}
-                title={item.title}
-                category={item.category}
-                image={item.image}
-                size={size}
-                href={`/documents/${item.slug}`}
-              />
+              <div key={item.slug} className={`${colSpan} ${rowSpan}`}>
+                <DocumentTile
+                  title={item.title}
+                  category={item.category}
+                  image={item.image}
+                  size={size}
+                  href={`/documents/${item.slug}`}
+                />
+              </div>
             );
           })}
         </div>

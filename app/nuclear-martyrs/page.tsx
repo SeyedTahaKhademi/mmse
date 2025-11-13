@@ -7,9 +7,9 @@ export default function NuclearMartyrsPage() {
     <Layout>
       <div className="space-y-8">
         <header className="space-y-3 text-center">
-          <h1 className="text-3xl font-black text-gray-900">شهدای هسته‌ای</h1>
+          <h1 className="text-3xl font-black text-gray-900">شهدای جنگ 12 روزه</h1>
           <p className="text-sm text-gray-600">
-            زندگی‌نامه شهدای هسته‌ای که در دفاع مقدس ۱۲ روزه آسمانی شدند.
+            زندگی‌نامه شهدای معروف که در دفاع مقدس ۱۲ روزه آسمانی شدند.
           </p>
         </header>
 

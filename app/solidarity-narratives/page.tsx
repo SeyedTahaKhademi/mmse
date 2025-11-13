@@ -21,7 +21,7 @@ export default function SolidarityNarrativesPage() {
               description={story.description}
               image={story.image}
               tag={story.tag}
-              href={`/solidarity-narratives/${story.slug}`}
+              summary={story.content[0]}
             />
           ))}
         </div>

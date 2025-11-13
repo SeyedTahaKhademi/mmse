@@ -39,23 +39,24 @@ const STORAGE_KEY = "app_settings_v1";
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<SettingsState>(DEFAULT_STATE);
+const readPersistedState = (): SettingsState => {
+  if (typeof window === "undefined") return DEFAULT_STATE;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_STATE;
+    const parsed = JSON.parse(raw) as Partial<SettingsState>;
+    return {
+      ...DEFAULT_STATE,
+      ...parsed,
+      profile: { ...DEFAULT_STATE.profile, ...(parsed.profile || {}) },
+    };
+  } catch {
+    return DEFAULT_STATE;
+  }
+};
 
-  // Load persisted settings
-  useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<SettingsState>;
-        setState((prev) => ({
-          ...prev,
-          ...parsed,
-          profile: { ...prev.profile, ...(parsed.profile || {}) },
-        }));
-      }
-    } catch {}
-  }, []);
+export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [state, setState] = useState<SettingsState>(() => readPersistedState());
 
   // Persist settings
   useEffect(() => {

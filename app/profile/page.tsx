@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import Layout from '@/components/Layout';
 import { useSettings } from '@/components/SettingsContext';
 import { useI18n } from '@/components/i18n';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const { profile, setProfile } = useSettings();
@@ -32,9 +33,18 @@ export default function ProfilePage() {
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden border bg-white">
               {profile.avatar ? (
-                <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
+                <div className="relative h-full w-full">
+                  <Image
+                    src={profile.avatar}
+                    alt={t.avatar}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                    unoptimized={profile.avatar.startsWith('data:')}
+                  />
+                </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-sm text-gray-500">{t.avatar}</div>
+                <div className="flex h-full w-full items-center justify-center text-sm text-gray-500">{t.avatar}</div>
               )}
             </div>
             <div>

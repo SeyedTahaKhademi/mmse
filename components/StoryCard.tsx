@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface StoryCardProps {
   title: string;
@@ -8,6 +9,7 @@ interface StoryCardProps {
   tag?: string;
   href?: string;
   variant?: 'wide' | 'compact';
+  summary?: string;
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({
@@ -17,6 +19,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
   tag,
   href,
   variant = 'wide',
+  summary,
 }) => {
   const CardWrapper = href ? Link : 'div';
 
@@ -35,13 +38,19 @@ const StoryCard: React.FC<StoryCardProps> = ({
   const content = (
     <div className={`${baseClasses}`}>
       <div className="overflow-hidden rounded-[24px] border border-white/70">
-        <img
-          src={image}
-          alt={title}
-          className={`w-full ${imageHeight} object-cover transition-transform duration-300 group-hover:scale-105`}
-        />
+        <div className={`relative w-full ${imageHeight}`}>
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 40vw, 90vw"
+            priority={false}
+            unoptimized={typeof image === 'string' && image.startsWith('https://')}
+          />
+        </div>
       </div>
-      <div className="text-center">
+      <div className={`flex flex-col items-center text-center ${variant === 'wide' ? 'sm:items-start sm:text-start' : ''}`}>
         {tag && (
           <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${tagClasses}`}>
             {tag}
@@ -49,6 +58,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
         )}
         <h3 className="mt-2 text-base font-black text-gray-900">{title}</h3>
         {description && <p className="text-sm text-gray-600">{description}</p>}
+        {summary && <p className="mt-2 text-sm leading-7 text-gray-700">{summary}</p>}
       </div>
     </div>
   );

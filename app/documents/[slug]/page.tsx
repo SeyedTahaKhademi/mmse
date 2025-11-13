@@ -2,13 +2,15 @@ import Layout from '@/components/Layout';
 import data from '@/data/documents.json';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 interface DocumentDetailPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export default function DocumentDetailPage({ params }: DocumentDetailPageProps) {
-  const item = data.find((doc) => doc.slug === params.slug);
+export default async function DocumentDetailPage({ params }: DocumentDetailPageProps) {
+  const { slug } = await params;
+  const item = data.find((doc) => doc.slug === slug);
 
   if (!item) {
     notFound();
@@ -21,22 +23,30 @@ export default function DocumentDetailPage({ params }: DocumentDetailPageProps) 
           <span className="text-xs font-semibold text-rose-600">{item.category}</span>
           <h1 className="text-3xl font-black text-gray-900">{item.title}</h1>
           <p className="text-sm text-gray-600">
-            این صفحه نمونه‌ای از روایت‌های آرشیوی است. می‌توانید متن کامل، تصاویر و ویدیوهای مرتبط را در این قالب نمایش دهید.
+            روایتی از مقاومت و ایثار در جنگ ۱۲ روزه. این مستند شامل اسناد، تصاویر و شهادت‌های مرتبط است.
           </p>
         </header>
 
         <div className="overflow-hidden rounded-[32px] border border-white/50 shadow-xl">
-          <img src={item.image} alt={item.title} className="h-72 w-full object-cover" />
+          <div className="relative h-72 w-full">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              className="object-cover"
+              sizes="(min-width: 1024px) 60vw, 90vw"
+              priority={false}
+              unoptimized={item.image.startsWith('https://')}
+            />
+          </div>
         </div>
 
         <section className="space-y-4 text-gray-700">
           <p>
-            در این بخش می‌توانید توضیحات بلند، اسناد متنی، و روایت‌های شفاهی مرتبط با «{item.title}» را قرار دهید. ساختار
-            صفحه به‌صورت موبایل‌محور طراحی شده تا کاربر تنها با اسکرول، محتوا را دنبال کند.
+            این مستند بخشی از آرشیو جامع روایت‌های مقاومت و ایثار در جنگ ۱۲ روزه است. هر سند شامل اطلاعات تفصیلی، تصاویر تاریخی و شهادت‌های مرتبط است.
           </p>
           <p>
-            همچنین امکان افزودن گالری عکس، کلیپ‌های ویدیویی و فایل‌های صوتی وجود دارد. برای هر سند می‌توانید زیرعنوان، تاریخ،
-            منبع و برچسب‌های مربوطه را درج کنید تا در آینده امکان فیلتر و جست‌وجو فراهم شود.
+            می‌توانید از طریق دسته‌بندی‌های مختلف (نبردهای موشکی، گزارش‌های تصویری، تحلیل‌ها و غیره) به سایر مستندات دسترسی پیدا کنید.
           </p>
         </section>
 

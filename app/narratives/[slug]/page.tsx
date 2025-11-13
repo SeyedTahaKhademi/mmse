@@ -1,10 +1,30 @@
 import Layout from '@/components/Layout';
-import data from '@/data/narratives.json';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
-export default function NarrativeDetailPage({ params }: { params: { slug: string } }) {
-  const item = data.find((s) => s.slug === params.slug);
-  if (!item) return notFound();
+export const dynamic = 'force-dynamic';
+
+type Narrative = {
+  slug: string;
+  title: string;
+  description: string;
+  image: string;
+  tag: string;
+  content: string[];
+};
+
+async function loadNarratives(): Promise<Narrative[]> {
+  const file = path.join(process.cwd(), 'data', 'narratives.json');
+  const raw = await fs.readFile(file, 'utf8');
+  return JSON.parse(raw) as Narrative[];
+}
+
+export default async function NarrativeDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = await loadNarratives();
+  const item = data.find((narrative) => narrative.slug === slug) ?? notFound();
 
   return (
     <Layout>
@@ -15,7 +35,17 @@ export default function NarrativeDetailPage({ params }: { params: { slug: string
         </header>
 
         <div className="overflow-hidden rounded-[24px] border bg-white">
-          <img src={item.image} alt={item.title} className="w-full h-64 md:h-80 object-cover" />
+          <div className="relative h-64 w-full md:h-80">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              priority={false}
+              className="object-cover"
+              sizes="(min-width: 768px) 60vw, 90vw"
+              unoptimized={item.image.startsWith('https://')}
+            />
+          </div>
         </div>
 
         <section className="prose prose-p:leading-8 max-w-none text-gray-800">
@@ -28,6 +58,4 @@ export default function NarrativeDetailPage({ params }: { params: { slug: string
   );
 }
 
-export async function generateStaticParams() {
-  return data.map((s) => ({ slug: s.slug }));
-}
+// Dynamic route; no static params needed
