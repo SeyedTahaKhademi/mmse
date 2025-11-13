@@ -21,6 +21,34 @@ const StoryCard: React.FC<StoryCardProps> = ({
   variant = 'wide',
   summary,
 }) => {
+  const normalizeSrc = (src: string) => {
+    let s = (src || '').trim();
+    const secondData = s.indexOf('data:image', 5);
+    if (secondData > 0) s = s.slice(0, secondData);
+    const badAttr = s.indexOf("' width=");
+    if (badAttr > 0) s = s.slice(0, badAttr);
+    // Ensure relative paths are valid for Next/Image by adding a leading slash
+    // Acceptable formats: data:, http(s)://, or starting with '/'
+    if (
+      s &&
+      !s.startsWith('data:') &&
+      !s.startsWith('http://') &&
+      !s.startsWith('https://') &&
+      !s.startsWith('/')
+    ) {
+      s = '/' + s;
+    }
+    // Fallback to a tiny transparent placeholder if empty
+    if (!s) {
+      s = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIi8+PC9zdmc+';
+    }
+    return s;
+  };
+
+  const safeImage = normalizeSrc(image);
+  const unoptimized =
+    typeof safeImage === 'string' &&
+    (safeImage.startsWith('https://') || safeImage.startsWith('http://') || safeImage.startsWith('data:'));
   const CardWrapper = href ? Link : 'div';
 
   const baseClasses =
@@ -40,13 +68,13 @@ const StoryCard: React.FC<StoryCardProps> = ({
       <div className="overflow-hidden rounded-[24px] border border-white/70">
         <div className={`relative w-full ${imageHeight}`}>
           <Image
-            src={image}
+            src={safeImage}
             alt={title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 40vw, 90vw"
             priority={false}
-            unoptimized={typeof image === 'string' && image.startsWith('https://')}
+            unoptimized={unoptimized}
           />
         </div>
       </div>

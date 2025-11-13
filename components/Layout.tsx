@@ -15,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* محتوای اصلی در کانتینر گلس شیک */}
       <main
-        className="flex-grow w-full max-w-5xl pt-28 pb-36 md:pt-32 md:pb-16 transition-all"
+        className="flex-grow w-full max-w-5xl pt-20 pb-32 md:pt-24 md:pb-16 transition-all"
         style={{ paddingBottom: 'calc(9rem + env(safe-area-inset-bottom, 0px))' }}
       >
         <div className="glass-panel rounded-[24px] md:rounded-[32px] p-4 md:p-10 border border-white/40">

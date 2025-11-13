@@ -16,28 +16,28 @@ const Header: React.FC = () => {
   const isRTL = language !== 'en';
   return (
     <header className="fixed top-0 right-0 left-0 z-30 px-4 sm:px-6">
-      <div className="glass-panel mx-auto mt-4 sm:mt-6 h-20 max-w-5xl rounded-[28px] border border-white/60 px-4 sm:px-6 shadow-lg grid grid-cols-3 items-center">
+      <div className="mx-auto mt-2 sm:mt-3 h-12 sm:h-14 max-w-5xl rounded-xl border border-gray-200 bg-white px-3 sm:px-4 grid grid-cols-3 items-center">
         <div className="flex items-center">
           {isHome ? (
             <span className="w-9 h-9" />
           ) : (
-            <button onClick={() => router.back()} aria-label={t.back} className="rounded-xl p-2 bg-white/70 border border-white/60">
+            <button onClick={() => router.back()} aria-label={t.back} className="rounded-lg p-1.5 border border-gray-300 text-gray-700 bg-transparent">
               {isRTL ? <ChevronRight size={22} /> : <ChevronLeft size={22} />}
             </button>
           )}
         </div>
 
         <div className="flex justify-center">
-          <Link href="/" className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <Link href="/" className="text-lg sm:text-xl font-black text-gray-900 tracking-tight">
             روایت
           </Link>
         </div>
 
-        <div className="hidden md:flex items-center justify-end gap-3 text-sm text-gray-700">
-          <span className="px-3 py-1 rounded-full bg-white/70 border border-white/60">
+        <div className="hidden md:flex items-center justify-end gap-2 text-xs text-gray-700">
+          <span className="px-2.5 py-0.5 rounded-full border border-gray-200">
             روایت‌های روز
           </span>
-          <span className="px-3 py-1 rounded-full bg-white/50 border border-white/40">
+          <span className="px-2.5 py-0.5 rounded-full border border-gray-200">
             قهرمانان مقاومت
           </span>
         </div>

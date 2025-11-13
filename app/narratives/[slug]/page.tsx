@@ -26,6 +26,20 @@ export default async function NarrativeDetailPage({ params }: { params: Promise<
   const data = await loadNarratives();
   const item = data.find((narrative) => narrative.slug === slug) ?? notFound();
 
+  const normalizeSrc = (src: string) => {
+    let s = (src || '').trim();
+    const secondData = s.indexOf('data:image', 5);
+    if (secondData > 0) s = s.slice(0, secondData);
+    const badAttr = s.indexOf("' width=");
+    if (badAttr > 0) s = s.slice(0, badAttr);
+    return s;
+  };
+
+  const safeImage = normalizeSrc(item.image);
+  const unoptimized =
+    typeof safeImage === 'string' &&
+    (safeImage.startsWith('https://') || safeImage.startsWith('http://') || safeImage.startsWith('data:'));
+
   return (
     <Layout>
       <article className="space-y-6">
@@ -37,13 +51,13 @@ export default async function NarrativeDetailPage({ params }: { params: Promise<
         <div className="overflow-hidden rounded-[24px] border bg-white">
           <div className="relative h-64 w-full md:h-80">
             <Image
-              src={item.image}
+              src={safeImage}
               alt={item.title}
               fill
               priority={false}
               className="object-cover"
               sizes="(min-width: 768px) 60vw, 90vw"
-              unoptimized={item.image.startsWith('https://')}
+              unoptimized={unoptimized}
             />
           </div>
         </div>

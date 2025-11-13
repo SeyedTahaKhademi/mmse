@@ -7,22 +7,29 @@ import DocumentTile from '@/components/DocumentTile';
 import documentData from '@/data/documents.json';
 import type { DocumentTileSize } from '@/data/documents';
 
-const filterTags = ['همه', 'موشکی', 'تحلیل', 'گزارش تصویری', 'همدلی'];
+const categories = Array.from(new Set(documentData.map((i) => i.category)));
+const filterTags = ['همه', ...categories];
 
 function DocumentsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
-  const [activeFilter, setActiveFilter] = useState('همه');
+  const DEFAULT_CATEGORY = 'همه';
+  const [activeFilter, setActiveFilter] = useState(DEFAULT_CATEGORY);
 
   useEffect(() => {
     if (categoryParam && filterTags.includes(categoryParam)) {
       setActiveFilter(categoryParam);
+    } else {
+      setActiveFilter(DEFAULT_CATEGORY);
     }
   }, [categoryParam]);
 
-  const filteredData = activeFilter === 'همه' 
-    ? documentData 
-    : documentData.filter(item => item.category === activeFilter);
+  const filteredData = activeFilter === 'همه'
+    ? documentData
+    : documentData.filter((item) => item.category === activeFilter);
+
+  const title = 'روایت‌های تصویری';
+  const subtitle = 'گزیده‌ای از گزارش‌ها و تصاویر میدانی از جنگ ۱۲ روزه';
 
   return (
     <Layout>
@@ -31,10 +38,8 @@ function DocumentsContent() {
         <header className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-black text-gray-900">مستندات و اسناد</h1>
-              <p className="mt-2 text-gray-600">
-                مجموعه‌ای جامع از مستندات، تصاویر و تحلیل‌های مرتبط با جنگ ۱۲ روزه
-              </p>
+              <h1 className="text-4xl font-black text-gray-900">{title}</h1>
+              <p className="mt-2 text-gray-600">{subtitle}</p>
             </div>
             <div className="hidden md:block rounded-full border-2 border-rose-500 px-6 py-2">
               <span className="text-sm font-semibold text-rose-600">مستندات</span>
@@ -82,7 +87,7 @@ function DocumentsContent() {
             }
             
             return (
-              <div key={item.slug} className={`${colSpan} ${rowSpan}`}>
+              <div key={item.slug} className={`${colSpan} ${rowSpan} h-full`}>
                 <DocumentTile
                   title={item.title}
                   category={item.category}

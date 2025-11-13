@@ -29,19 +29,36 @@ const DocumentTile: React.FC<DocumentTileProps> = ({
   priority = false,
 }) => {
   const Wrapper = href ? Link : 'div';
-  const className = `group relative block overflow-hidden rounded-3xl border border-white/50 bg-white/10 shadow-md shadow-gray-900/5 transition duration-300 ease-out hover:scale-[1.02] hover:shadow-2xl focus-visible:scale-[1.02] ${sizeClasses[size]}`;
+  const className = `group relative block h-full overflow-hidden rounded-3xl border border-white/50 bg-white/10 shadow-md shadow-gray-900/5 transition duration-300 ease-out hover:scale-[1.02] hover:shadow-2xl focus-visible:scale-[1.02] ${sizeClasses[size]}`;
+
+  const normalizeSrc = (src: string) => {
+    let s = (src || '').trim();
+    const secondData = s.indexOf('data:image', 5);
+    if (secondData > 0) s = s.slice(0, secondData);
+    const badAttr = s.indexOf("' width=");
+    if (badAttr > 0) s = s.slice(0, badAttr);
+    if (s && !s.startsWith('data:') && !s.startsWith('http://') && !s.startsWith('https://') && !s.startsWith('/')) {
+      s = '/' + s;
+    }
+    if (!s) {
+      s = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIi8+PC9zdmc+';
+    }
+    return s;
+  };
+  const safeImage = normalizeSrc(image);
+  const unoptimized = typeof safeImage === 'string' && (safeImage.startsWith('https://') || safeImage.startsWith('http://') || safeImage.startsWith('data:'));
 
   const content = (
     <>
       <div className="relative h-full w-full">
         <Image
-          src={image}
+          src={safeImage}
           alt={title}
           fill
           className="object-cover"
           sizes="(min-width: 1280px) 20vw, (min-width: 768px) 30vw, 45vw"
           priority={priority}
-          unoptimized={typeof image === 'string' && image.startsWith('https://')}
+          unoptimized={unoptimized}
         />
       </div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />

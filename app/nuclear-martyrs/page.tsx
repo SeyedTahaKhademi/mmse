@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import StoryCard from '@/components/StoryCard';
 import data from '@/data/nuclear_martyrs.json';
+import SearchableList from '@/components/SearchableList';
 
 export default function NuclearMartyrsPage() {
   return (
@@ -13,19 +14,16 @@ export default function NuclearMartyrsPage() {
           </p>
         </header>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {data.map((m) => (
-            <StoryCard
-              key={m.slug}
-              title={m.name}
-              description={m.shortDescription}
-              image={m.image}
-              tag={'شهید'}
-              href={`/nuclear-martyrs/${m.slug}`}
-              variant="compact"
-            />
-          ))}
-        </div>
+        <SearchableList
+          items={data.map((m: any) => ({
+            slug: m.slug,
+            title: m.name,
+            description: m.shortDescription,
+            image: m.image,
+            tag: 'شهید',
+          })) as any}
+          linkBase="/nuclear-martyrs"
+        />
       </div>
     </Layout>
   );

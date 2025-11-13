@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import StoryCard from '@/components/StoryCard';
 import data from '@/data/narratives.json';
+import SearchableList from '@/components/SearchableList';
 
 export default function WarNarrativesPage() {
   return (
@@ -13,18 +14,7 @@ export default function WarNarrativesPage() {
           </p>
         </header>
 
-        <div className="space-y-5">
-          {data.map((story) => (
-            <StoryCard
-              key={story.slug}
-              title={story.title}
-              description={story.description}
-              image={story.image}
-              tag={story.tag}
-              href={`/narratives/${story.slug}`}
-            />
-          ))}
-        </div>
+        <SearchableList items={data as any} linkBase="/narratives" />
       </div>
     </Layout>
   );

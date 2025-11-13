@@ -37,3 +37,11 @@ yarn-error.log*
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# backups and OS files
+*.bak
+*.bak2
+*.bak3
+*.bak_images
+data/narratives.merged.json
+.DS_Store

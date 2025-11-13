@@ -3,12 +3,15 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Layout from '@/components/Layout';
 import CategoryCard from '@/components/categuryCard';
 import DocumentTile from '@/components/DocumentTile';
 import { documentItems } from '@/data/documents';
 import carouselData from '@/data/carousel.json';
+import narratives from '@/data/narratives.json';
+import solidarity from '@/data/solidarity_narratives.json';
+import martyrs from '@/data/nuclear_martyrs.json';
 
 // --- کاروسل تصاویر ---
 const Carousel = () => {
@@ -44,7 +47,7 @@ const Carousel = () => {
 
   return (
     <div 
-      className="relative w-full h-64 sm:h-80 md:h-96 rounded-3xl overflow-hidden shadow-2xl group"
+      className="relative w-full h-48 sm:h-60 md:h-72 rounded-3xl overflow-hidden shadow-2xl group"
       onMouseEnter={() => setAutoPlay(false)}
       onMouseLeave={() => setAutoPlay(true)}
     >
@@ -93,40 +96,136 @@ export default function Home() {
   return (
     <Layout>
       <div className="space-y-10">
-        {/* قهرمانان صفحه اصلی */}
+        {/* قهرمان صفحه اصلی ساده‌شده */}
         <section className="space-y-6">
-          <div className="rounded-[28px] bg-gradient-to-br from-rose-500 to-orange-400 p-5 sm:p-6 md:p-8 text-white shadow-2xl space-y-4">
+          <div className="rounded-[28px] bg-gradient-to-br from-rose-500 to-orange-400 p-6 md:p-8 text-white shadow-2xl space-y-4 text-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight">
               روایت تصویری از ایثار ۱۲ روزه
             </h1>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Link
-                href="/documents?category=موشکی"
-                className="rounded-2xl bg-white/20 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/30 backdrop-blur"
+            <p className="text-white/90 text-sm md:text-base">
+              در دوازده روزِ آتش و آسمانِ سرخ، روایت ما از میان غبار و نور برخاست؛
+              صدایی که بر ویرانه‌ها ایستاد و از ایثار گفت، از دستانی که در دلِ تاریکی چراغ شدند.
+              این دکلمه، تصویرِ لحظه‌هایی‌ست که فراموش نمی‌شوند.
+            </p>
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  const el = document.getElementById('visual-narratives');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="inline-block rounded-full bg-white text-rose-600 px-5 py-2 text-sm font-semibold hover:bg-white/90"
+                type="button"
               >
-                نبردهای موشکی
-              </Link>
-              <Link
-                href="/documents?category=گزارش تصویری"
-                className="rounded-2xl bg-white/20 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/30 backdrop-blur"
-              >
-                گزارش‌های تصویری
-              </Link>
-              <Link
-                href="/documents?category=تحلیل"
-                className="rounded-2xl bg-white/20 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/30 backdrop-blur"
-              >
-                تحلیل‌های میدانی
-              </Link>
-              <Link
-                href="/documents"
-                className="rounded-2xl bg-white/20 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/30 backdrop-blur"
-              >
-                تمام مستندات
-              </Link>
+                دیدن روایت تصویری
+              </button>
             </div>
           </div>
+        </section>
 
+        {/* جستجوی سراسری مینیمال */}
+        <section className="space-y-3">
+          {(() => {
+            const [query, setQuery] = ((): [string, (v: string) => void] => {
+              // use a small component inline to keep state per render
+              const [q, setQ] = useState('');
+              return [q, setQ];
+            })();
+
+            const combined = useMemo(() => {
+              const narr = narratives.map((n: any) => ({
+                title: n.title,
+                description: n.description,
+                content: n.content,
+                image: n.image,
+                href: `/narratives/${n.slug}`,
+                tag: 'روایت جنگی',
+              }));
+              const soli = solidarity.map((s: any) => ({
+                title: s.title,
+                description: s.description,
+                content: s.content,
+                image: s.image,
+                href: `/solidarity-narratives/${s.slug}`,
+                tag: 'روایت همدلی',
+              }));
+              const mts = martyrs.map((m: any) => ({
+                title: m.name,
+                description: m.shortDescription,
+                image: m.image,
+                href: `/nuclear-martyrs/${m.slug}`,
+                tag: 'شهید',
+              }));
+              return [...narr, ...soli, ...mts];
+            }, []);
+
+            const results = useMemo(() => {
+              const q = query.trim().toLowerCase();
+              if (!q) return [] as any[];
+              return combined.filter((it: any) => {
+                const hay = [it.title, it.description || '', ...(it.content || [])]
+                  .join(' ')
+                  .toLowerCase();
+                return hay.includes(q);
+              }).slice(0, 8);
+            }, [query, combined]);
+
+            return (
+              <div className="space-y-2">
+                <div className="max-w-3xl mx-auto w-full px-2 sm:px-0">
+                  <div className="relative">
+                    <input
+                      type="search"
+                      aria-label="جستجوی سراسری"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="جستجو..."
+                      className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pr-3 pl-9 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 text-sm"
+                    />
+                    <svg
+                      className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="11" cy="11" r="7" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                  </div>
+                </div>
+
+                {query && (
+                  <div className="max-w-3xl mx-auto w-full rounded-lg border border-gray-200 bg-white">
+                    <ul className="divide-y divide-gray-100">
+                      {results.map((r, idx) => (
+                        <li key={idx} className="p-3 text-sm hover:bg-gray-50">
+                          <Link href={r.href} className="flex items-center gap-3">
+                            <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[11px] border border-gray-200 text-gray-600">
+                              {r.tag}
+                            </span>
+                            <span className="font-semibold text-gray-900">{r.title}</span>
+                            {r.description && (
+                              <span className="text-gray-500 truncate">— {r.description}</span>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                      {results.length === 0 && (
+                        <li className="p-3 text-xs text-gray-500">نتیجه‌ای یافت نشد.</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </section>
+
+        {/* کاروسل تصاویر با ارتفاع کمتر */}
+        <section>
           <Carousel />
         </section>
 
@@ -137,19 +236,25 @@ export default function Home() {
             <span className="text-sm text-gray-500">۳ روایت شاخص در دسترس است</span>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <CategoryCard title="شهدای جنگ" href="/nuclear-martyrs" iconName="شهدای هسته ای" />
-            <CategoryCard title="روایات جنگ" href="/narratives" iconName="روایات جنگ" />
-            <CategoryCard title="روایات همدلی" href="/solidarity-narratives" iconName="روایات همدلی" />
+            <div className="order-2 md:order-1">
+              <CategoryCard title="شهدای جنگ" href="/nuclear-martyrs" iconName="شهدای هسته ای" />
+            </div>
+            <div className="order-1 md:order-2">
+              <CategoryCard title="روایات جنگ" href="/narratives" iconName="روایات جنگ" />
+            </div>
+            <div className="order-3 md:order-3">
+              <CategoryCard title="روایات همدلی" href="/solidarity-narratives" iconName="روایات همدلی" />
+            </div>
           </div>
         </section>
 
         {/* ۳. بخش مستندات */}
-        <section className="space-y-5">
+        <section id="visual-narratives" className="space-y-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div className="flex-1">
-              <h2 className="section-title">مستندات و اسناد</h2>
+              <h2 className="section-title">روایت‌های تصویری</h2>
               <p className="text-sm text-gray-600 mt-2">
-                مجموعه‌ای جامع از مستندات، تصاویر و تحلیل‌های مرتبط با جنگ ۱۲ روزه. هر سند شامل اطلاعات تفصیلی و شهادت‌های مرتبط است.
+                گزیده‌ای از گزارش‌ها و تصاویر میدانی. این بخش فقط آیتم‌های دسته «گزارش تصویری» را نمایش می‌دهد.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">#نبردهای موشکی</span>
@@ -158,14 +263,17 @@ export default function Home() {
               </div>
             </div>
             <Link
-              href="/documents"
+              href="/documents?category=گزارش تصویری"
               className="whitespace-nowrap rounded-full border border-rose-600 px-5 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
             >
-              مشاهده همه
+              مشاهده همه روایت‌های تصویری
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 auto-rows-[120px] sm:auto-rows-[140px] lg:auto-rows-[160px] gap-3">
-            {documentItems.slice(0, 8).map((item, index) => (
+            {documentItems
+              .filter((item) => item.category === 'گزارش تصویری')
+              .slice(0, 6)
+              .map((item, index) => (
               <DocumentTile
                 key={item.slug}
                 title={item.title}
@@ -173,7 +281,7 @@ export default function Home() {
                 image={item.image}
                 size={item.size}
                 href={`/documents/${item.slug}`}
-                priority={index < 4}
+                priority={index < 6}
               />
             ))}
           </div>
