@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '@/components/Layout';
 import { useSettings } from '@/components/SettingsContext';
 import { useI18n } from '@/components/i18n';
@@ -10,6 +10,8 @@ export default function ProfilePage() {
   const { profile, setProfile } = useSettings();
   const t = useI18n();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,7 +34,7 @@ export default function ProfilePage() {
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden border bg-white">
-              {profile.avatar ? (
+              {mounted && profile.avatar ? (
                 <div className="relative h-full w-full">
                   <Image
                     src={profile.avatar}

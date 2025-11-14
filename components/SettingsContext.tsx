@@ -85,6 +85,24 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     root.dir = dir;
   }, [state.theme, state.fontSize, state.language]);
 
+  useEffect(() => {
+    if (typeof document === "undefined" || typeof window === "undefined") return;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const resolved = state.theme === "system" ? (media.matches ? "dark" : "light") : state.theme;
+      document.documentElement.dataset.theme = resolved;
+    };
+    apply();
+    if (state.theme !== "system") return;
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', apply);
+      return () => media.removeEventListener('change', apply);
+    } else {
+      media.addListener(apply);
+      return () => media.removeListener(apply);
+    }
+  }, [state.theme]);
+
   const api = useMemo<SettingsContextType>(() => ({
     ...state,
     setProfile: (p) => setState((s) => ({ ...s, profile: { ...s.profile, ...p } })),

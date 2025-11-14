@@ -27,7 +27,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ title, href, iconName }) =>
       href={href}
       className="group block rounded-[28px] border border-white/70 bg-white/80 p-4 text-center shadow-lg shadow-gray-900/5 transition-all hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-orange-100 text-gray-900 group-hover:from-rose-200 group-hover:to-orange-200">
+      <div className="category-icon mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-orange-100 text-gray-900 group-hover:from-rose-200 group-hover:to-orange-200">
         {icon}
       </div>
       <h3 className="text-base font-black text-gray-900 leading-snug">{title}</h3>
